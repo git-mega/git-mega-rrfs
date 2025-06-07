@@ -45,16 +45,24 @@ long getFileSize(const char *filename) {
 
 // Helper: check if file is binary
 bool isBinaryFile(const char *filename) {
-    FILE *fp = fopen(filename, "rb");
-    if (!fp) return true;
+    char command[512];
+    snprintf(command, sizeof(command), "file '%s'", filename);
 
-    int c, ascii = 0, nonascii = 0;
-    for (int i = 0; i < 1024 && (c = fgetc(fp)) != EOF; i++) {
-        if (iscntrl(c) && !isspace(c)) nonascii++;
-        else ascii++;
+    FILE *pipe = popen(command, "r");
+    if (!pipe) {
+        perror("popen failed to run the file command");
+        return false;
     }
-    fclose(fp);
-    return nonascii > ascii;
+
+    char buffer[512];
+    if (fgets(buffer, sizeof(buffer), pipe) == NULL) {
+        pclose(pipe);
+        return false;
+    }
+
+    pclose(pipe);
+
+    return strstr(buffer, "ASCII text") == NULL;
 }
 
 // Read threshold and excludes from .mega.config
