@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gcc -o bin/isMegaFile isMegaFileMain.c isMegaFile.c
+gcc -O3 -o bin/isMegaFile src/isMegaFile.c

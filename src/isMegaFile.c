@@ -9,21 +9,6 @@
 
 #define MAX_LINE 512
 #define MAX_EXCLUDES 512
-#define PATH_MAX 512
-
-// Helper: get Git top-level directory
-bool getGitRoot(char *output, size_t len) {
-    FILE *fp = popen("git rev-parse --show-toplevel 2>/dev/null", "r");
-    if (!fp) return false;
-    if (!fgets(output, len, fp)) {
-        pclose(fp);
-        return false;
-    }
-    // Remove newline
-    output[strcspn(output, "\r\n")] = 0;
-    pclose(fp);
-    return true;
-}
 
 // Helper: check if path is a directory
 bool isDirectory(const char *path) {
@@ -99,16 +84,9 @@ bool isExcluded(const char *filename, char excludes[][MAX_LINE], int excludeCoun
     return false;
 }
 
-// Main API
-bool isMegaFile(const char *path) {
+// check if a text file is a Mega file
+bool isMegaFile(const char *configPath, const char *path) {
     if (isDirectory(path) || isSymlink(path)) return false;
-
-    // Find .mega.config from Git root
-    char gitRoot[PATH_MAX];
-    if (!getGitRoot(gitRoot, sizeof(gitRoot))) return false;
-
-    char configPath[PATH_MAX];
-    snprintf(configPath, sizeof(configPath), "%s/.mega.conf", gitRoot);
 
     // Read config
     char excludes[MAX_EXCLUDES][MAX_LINE];
@@ -127,3 +105,17 @@ bool isMegaFile(const char *path) {
     return filesize > threshBytes;
 }
 
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        printf("Usage: %s <.mega.conf> <file>\n", argv[0]);
+        return 1;
+    }
+
+    if (isMegaFile(argv[1], argv[2])) {
+        printf("true\n");
+    } else {
+        printf("false\n");
+    }
+
+    return 0;
+}
