@@ -9,33 +9,6 @@
 
 #define MAX_LINE 512
 #define MAX_EXCLUDES 512
-#define PATH_MAX 512
-
-// Helper: get Git top-level directory
-bool getGitRoot(char *output, size_t len) {
-    FILE *fp = popen("git rev-parse --show-toplevel 2>/dev/null", "r");
-    if (!fp) return false;
-    if (!fgets(output, len, fp)) {
-        pclose(fp);
-        return false;
-    }
-    // Remove newline
-    output[strcspn(output, "\r\n")] = 0;
-    pclose(fp);
-    return true;
-}
-
-// Helper: check if path is a directory
-bool isDirectory(const char *path) {
-    struct stat pathStat;
-    return stat(path, &pathStat) == 0 && S_ISDIR(pathStat.st_mode);
-}
-
-// Helper: check if path is a symlink
-bool isSymlink(const char *path) {
-    struct stat pathStat;
-    return lstat(path, &pathStat) == 0 && S_ISLNK(pathStat.st_mode);
-}
 
 // Helper: get file size
 long getFileSize(const char *filename) {
@@ -43,29 +16,7 @@ long getFileSize(const char *filename) {
     return stat(filename, &pathStat) == 0 ? pathStat.st_size : -1;
 }
 
-// Helper: check if file is binary
-bool isBinaryFile(const char *filename) {
-    char command[512];
-    snprintf(command, sizeof(command), "file '%s'", filename);
-
-    FILE *pipe = popen(command, "r");
-    if (!pipe) {
-        perror("popen failed to run the file command");
-        return false;
-    }
-
-    char buffer[512];
-    if (fgets(buffer, sizeof(buffer), pipe) == NULL) {
-        pclose(pipe);
-        return false;
-    }
-
-    pclose(pipe);
-
-    return strstr(buffer, "ASCII text") == NULL;
-}
-
-// Read thresh and excludes from .mega.config
+// Read threshold and excludes from .mega.config
 long readConfig(const char *configPath, char excludes[][MAX_LINE], int *excludeCount) {
     FILE *fp = fopen(configPath, "r");
     if (!fp) return 1000;
@@ -99,17 +50,8 @@ bool isExcluded(const char *filename, char excludes[][MAX_LINE], int excludeCoun
     return false;
 }
 
-// Main API
-bool isMegaFile(const char *path) {
-    if (isDirectory(path) || isSymlink(path)) return false;
-
-    // Find .mega.config from Git root
-    char gitRoot[PATH_MAX];
-    if (!getGitRoot(gitRoot, sizeof(gitRoot))) return false;
-
-    char configPath[PATH_MAX];
-    snprintf(configPath, sizeof(configPath), "%s/.mega.conf", gitRoot);
-
+// check if a text file is a Mega file
+bool isMegaFile(const char *path, const char *configPath) {
     // Read config
     char excludes[MAX_EXCLUDES][MAX_LINE];
     int excludeCount;
@@ -119,11 +61,21 @@ bool isMegaFile(const char *path) {
     // Exclusion by filename
     if (isExcluded(path, excludes, excludeCount)) return false;
 
-    // Binary check
-    if (isBinaryFile(path)) return true;
-
-    // File size check
     long filesize = getFileSize(path);
     return filesize > threshBytes;
 }
 
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        printf("Usage: %s <file> <.mega.conf>\n", argv[0]);
+        return 1;
+    }
+
+    if (isMegaFile(argv[1], argv[2])) {
+        printf("YES\n");
+    } else {
+        printf("NO\n");
+    }
+
+    return 0;
+}
