@@ -65,19 +65,19 @@ bool isBinaryFile(const char *filename) {
     return strstr(buffer, "ASCII text") == NULL;
 }
 
-// Read threshold and excludes from .mega.config
+// Read thresh and excludes from .mega.config
 long readConfig(const char *configPath, char excludes[][MAX_LINE], int *excludeCount) {
     FILE *fp = fopen(configPath, "r");
     if (!fp) return 1000;
 
     char line[MAX_LINE];
-    long thresholdKB = 1000;
+    long threshKB = 1000;
     *excludeCount = 0;
 
     while (fgets(line, MAX_LINE, fp)) {
         if (line[0] == '#') continue;
         if (strncmp(line, "file_size>", 10) == 0) {
-            sscanf(line + 10, "%ldkb", &thresholdKB);
+            sscanf(line + 10, "%ldkb", &threshKB);
         } else if (line[0] == '!') {
             if (*excludeCount < MAX_EXCLUDES) {
                 strncpy(excludes[*excludeCount], line + 1, MAX_LINE);
@@ -88,7 +88,7 @@ long readConfig(const char *configPath, char excludes[][MAX_LINE], int *excludeC
     }
 
     fclose(fp);
-    return thresholdKB;
+    return threshKB;
 }
 
 // Check if file is excluded by name
@@ -109,13 +109,13 @@ bool isMegaFile(const char *path) {
     if (!getGitRoot(gitRoot, sizeof(gitRoot))) return false;
 
     char configPath[PATH_MAX];
-    snprintf(configPath, sizeof(configPath), "%s/.mega.config", gitRoot);
+    snprintf(configPath, sizeof(configPath), "%s/.mega.conf", gitRoot);
 
     // Read config
     char excludes[MAX_EXCLUDES][MAX_LINE];
     int excludeCount;
-    long thresholdKB = readConfig(configPath, excludes, &excludeCount);
-    long thresholdBytes = thresholdKB * 1024;
+    long threshKB = readConfig(configPath, excludes, &excludeCount);
+    long threshBytes = threshKB * 1024;
 
     // Exclusion by filename
     if (isExcluded(path, excludes, excludeCount)) return false;
@@ -125,6 +125,6 @@ bool isMegaFile(const char *path) {
 
     // File size check
     long filesize = getFileSize(path);
-    return filesize > thresholdBytes;
+    return filesize > threshBytes;
 }
 
