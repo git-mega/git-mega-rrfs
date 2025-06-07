@@ -93,9 +93,8 @@ long readConfig(const char *configPath, char excludes[][MAX_LINE], int *excludeC
 
 // Check if file is excluded by name
 bool isExcluded(const char *filename, char excludes[][MAX_LINE], int excludeCount) {
-    char *base = basename((char *)filename);
     for (int i = 0; i < excludeCount; ++i) {
-        if (strcmp(base, excludes[i]) == 0) return true;
+        if (strcmp(filename, excludes[i]) == 0) return true;
     }
     return false;
 }
