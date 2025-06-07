@@ -1,4 +1,4 @@
 testdata
 *.x
 bin/*
-!bin/.placeholder
+!bin/git-mega
