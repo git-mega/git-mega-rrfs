@@ -16,50 +16,50 @@ fi
 for i in "$@"; do case $i in
   install)
     shift
-    exec $basedir/sh/install.sh "$@"
+    exec $basedir/ush/install.sh "$@"
     ;;
   uninstall)
     shift
-    exec $basedir/sh/uninstall.sh "$@"
+    exec $basedir/ush/uninstall.sh "$@"
     ;;
   hello)
     shift
-    exec $basedir/sh/hello.sh "$@"
+    exec $basedir/ush/hello.sh "$@"
     ;;
   version)
     cat $basedir/VERSION
     ;;
   status)
     shift
-    exec $basedir/sh/status.sh "$@"
+    exec $basedir/ush/status.sh "$@"
     ;;
   help)
     shift
-    exec $basedir/sh/help.sh "$@"
+    exec $basedir/ush/help.sh "$@"
     ;;
   deposit)
     shift
-    exec $basedir/sh/deposit.sh "$@"
+    exec $basedir/ush/deposit.sh "$@"
     ;;
   gethash)
     shift
-    exec $basedir/sh/gethash.sh "$@"
+    exec $basedir/ush/gethash.sh "$@"
     ;;
   compareDirs)
     shift
-    exec $basedir/sh/compareDirs.sh "$@"
+    exec $basedir/ush/compareDirs.sh "$@"
     ;;
   allhandscheck|allHandsCheck)
     shift
-    exec $basedir/sh/allHandsCheck.sh "$@"
+    exec $basedir/ush/allHandsCheck.sh "$@"
     ;;
   repair)
     shift
-    exec $basedir/sh/repair.sh "$@"
+    exec $basedir/ush/repair.sh "$@"
     ;;
   verify|fsck)
     shift
-    exec $basedir/sh/verifyFiles.sh "$@"
+    exec $basedir/ush/verifyFiles.sh "$@"
     ;;
   *)
     echo "unknow git-mega option: $@"
