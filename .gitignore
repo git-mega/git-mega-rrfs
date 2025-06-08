@@ -1,4 +1,3 @@
 testdata
 *.x
-bin/*
-!bin/git-mega
+bin/isMegaFile

@@ -63,18 +63,6 @@ is_link_to_mega_space()
   fi
 }
 
-#generate a relative link pointing to a mega file
-function qlink {
-  local myfile=$1
-  local myhash=$( ${MEGA_SHA_CMD} $myfile | cut -d ' ' -f1 )
-  local subdir=${myhash:0:2}
-  local destfile="$qroot"/"$subdir"/"$myhash"
-  ln -rsnf "$destfile" "${myfile}_megatmp" 2>/dev/null
-  local lnfile=$(readlink ${myfile}_megatmp )
-  rm -rf ${myfile}_megatmp
-  echo $lnfile
-}
-
 # determine whether a file($1) should be put into the mega space
 function MegaOrNot {
   local filepath="$1"
@@ -84,6 +72,7 @@ function MegaOrNot {
   mega_it=$(isMegaFile ${workTreeTop}/.mega.conf $filepath)
 
   if $mega_it; then
+    filesize=$(stat -c %s $filepath)
     local sizestring=$(numfmt --to=iec $filesize 2>/dev/null)
     echo "git-mega:process '$filepath',${sizestring}" 1>&2
 #  else

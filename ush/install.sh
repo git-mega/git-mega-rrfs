@@ -33,5 +33,5 @@ EOF
 
 fi
 
-echo -e "git-mega installed for current HEAD:\n
+echo -e "git-mega installed for current HEAD.\n
 run 'git mega' for more information"

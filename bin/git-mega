@@ -41,6 +41,10 @@ for i in "$@"; do case $i in
     shift
     exec $basedir/ush/deposit.sh "$@"
     ;;
+  withdraw)
+    shift
+    exec $basedir/ush/withdraw.sh "$@"
+    ;;
   gethash)
     shift
     exec $basedir/ush/gethash.sh "$@"
