@@ -34,3 +34,22 @@ The file change history is tracked by the `FIX_RRFS2` repo.
 Backup `$GITROOT/.mega/` to HPSS by `sbatch save2hpss.<machine>`  
 Sync `$GITROOT/.mega/` between RDHPCS through either `rsync` or `globus`  
 Uninstall by removing `$GITROOT/.mega.conf` and/or `$ GITROOT/.mega/`. Be sure to backup `$GITROOT/.mega/` before removing it.
+
+# 3. MISC
+### 3.1 list all mega files and find files with the same hashes
+```
+git mega ls-files . > tmp.txt
+cut -d= -f2 tmp.txt | sort > hash.txt
+uniq hash.txt > uniq.txt
+sort hash.txt | uniq -d > duplicate.txt  # find duplicate lins in hash.txt
+grep -f duplicate.txt tmp.txt > dup_files.txt  # files with duplicate hashes
+
+## find lines only in hash.txt but not in uniq.txt
+# vimdiff hash.txt uniq.txt
+# comm -23 <(sort hash.txt) <(sort uniq.txt) | uniq > duplicate.txt
+
+wc -l uniq.txt
+
+find .mega -type f | wc -l
+find .mega -type f | cut -c10- |sort  > mega.txt
+```
