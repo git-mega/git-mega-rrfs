@@ -1,0 +1,33 @@
+#!/bin/bash
+real_git=$(which -a git | sed -n '2p')
+if [[ -z "$real_git" ]]; then
+  echo "git: No such file or directory"
+  exit 1
+fi
+
+git_root=$($real_git rev-parse --show-toplevel 2>/dev/null)
+if [[ -z "$git_root" ]]; then
+  exec $real_git "$@"  # real git will terminte the process and exit
+fi
+
+if [[ "$1" == "add" ]] || [[ "$1" == "commit" ]]; then
+  if [[ "$1" == "add" ]]; then
+    file_list=$(git ls-files --others --modified --exclude-standard $@)
+  else
+    file_list=$(git diff --cached --name-only)
+  fi
+
+  for file in $file_list; do
+    if [[ -f "$file" ]]; then # skip removed files
+      if $(isMegaFile  $git_root/.mega.conf  $file); then
+        size=$(stat -c %s "$file")
+        echo "found mega file: $file ($size bytes)"
+        echo "run 'git mega deposit <file>|<path>' first"
+        exit 1
+      fi
+    fi
+  done
+fi
+
+# Pass to real git
+exec $real_git "$@"
