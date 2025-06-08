@@ -69,6 +69,10 @@ for i in "$@"; do case $i in
     shift
     exec $basedir/ush/verifyFiles.sh "$@"
     ;;
+  collision-check)
+    shift
+    exec $basedir/ush/collision-check.sh "$@"
+    ;;
   *)
     echo "unknow git-mega option: $@"
     exit
