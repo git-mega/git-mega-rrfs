@@ -1,9 +1,15 @@
 # git-mega-rrfs
-This is a customized (some kind of simplified) version of [`git-mega`](https://github.com/git-mega/git-mega) for the Level2 management of the RRFS fix files (`FIX_RRFS2`).
+This is a customized (some kind of simplified) version of [`git-mega`](https://github.com/git-mega/git-mega) for the Level 2 management of the RRFS2 fix files (`FIX_RRFS2`).
 
 Only those who have been contacted will need to learn and understand how to use this version of `git-mega`
 
 # 1. How to use `git-mega` to do real tracking of `FIX_RRFS2`?
+### NOTE:
+- *Generally, we can only **add** files into `FIX_RRFS2`*  
+- *If there is a need to remove some binary files, it should be done and coordinated in a group work meeting with a majority of the fix file managers present*
+- *Before git add binary data into the `FIX_RRFS` repo, be sure to check the file size first. Sometimes, an unexpected file size may indicate unresolved issues. It is easy to add data, but not trivial to remove data (although it can certainly be done with caution in a group meeting)*
+- *All initial steps have been completed in all RDHPCS. So only need to follow step 1.1 for the Level 2 management of the RRFS2 fix files
+### 1.1 
 
 # 2. Under the hood
 ### 2.1. install 
