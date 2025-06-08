@@ -85,6 +85,7 @@ function MegaOrNot {
 deposit_if_mega_file()
 {
   local myfile="$1"
+  local collision=false
   if $(MegaOrNot "$myfile") ; then
     local myhash=$( ${MEGA_SHA_CMD} "$myfile" | cut -d ' ' -f1)
     if [ -z "$myhash" ]; then
@@ -94,11 +95,23 @@ deposit_if_mega_file()
       local subdir=${myhash:0:2}
       local destfile="$qroot"/"$subdir"/"$myhash"
       mkdir -p "$qroot"/"$subdir" 2>/dev/null
-      chmod +w "$destfile" 2>/dev/null
-      mv -f "$myfile" "$destfile" 2>/dev/null #always trust new checksum-verified file
-      chmod a-w "$destfile" #lock the mega file
-      ln -rsnf "$destfile" "$myfile"
-      echo 'true'
+      if [[ -s "$destfile"  ]]; then # make sure no hash collision
+        if ! diff -q $myfile $destfile &> /dev/null; then
+          echo -e "FATAL: SHA512SUM collision found:\n$myfile\n$subdir/$myhash" 1>&2
+          collision=true
+#       else
+#         echo -e "DEBUG: no difference" 1>&2
+        fi
+      fi
+      if $collision; then
+        echo 'false'
+      else # no collision, which is expected in the next 100 years or so
+        chmod +w "$destfile" 2>/dev/null
+        mv -f "$myfile" "$destfile" 2>/dev/null #always trust new checksum-verified file
+        chmod a-w "$destfile" #lock the mega file
+        ln -rsnf "$destfile" "$myfile"
+        echo 'true'
+      fi
     fi
   else
     echo 'false'
