@@ -14,19 +14,12 @@ For example, we want to add a set of new static BEC files. We copy them to under
 ```
 cd $FIX_RRFS2/static_bec
 cp -rp $SRC conus12km_L60.20250606
-# 1. Sanity check to ensure no SHA512SUM collisions:
-git mega collision-check conus12km_L60.20250606  # this will take a few minutes
 
-# 2. if everything is good, git mega deposit the new fix files into the MEGA space:
 git mega deposit conus12km_L60.20250606
 
-# 3. git add/commit/push
 git add conus12km_L60.20250606
 git commit -m "add static_bec/conus12km_L60.20250606/"
 git push
-
-# 4. sync to other platforms
-
 ```
 
 # 2. Under the hood
