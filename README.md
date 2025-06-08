@@ -5,11 +5,29 @@ Only those who have been contacted will need to learn and understand how to use 
 
 # 1. How to use `git-mega` to do real tracking of `FIX_RRFS2`?
 ### NOTE:
-- *Generally, we can only **add** fix files into `FIX_RRFS2` (i.e. no removal)*  
+- *Generally, we can only **add** fix files into `FIX_RRFS2` (i.e. no overwrite, no removal)*  
 - *If there is a need to remove some binary files, it should be done and coordinated in a group work meeting with a majority of the fix file managers present*
-- *Before git add binary data into the `FIX_RRFS` repo, be sure to check the file size first. Sometimes, an unexpected file size may indicate unresolved issues. It is easy to add data, but not trivial to remove data (although it can certainly be done with caution in a group meeting)*
-- *All `git mega` initial steps have been completed in all RDHPCS. So we only need to follow step 1.1 for the Level 2 management of the RRFS2 fix files. Step 2 is provided below just for awareness*
+- *Before git add fix files into the `FIX_RRFS` repo, be sure to check the file size first. Sometimes, an unexpected file size may indicate unresolved issues. It is easy to add data, but not trivial to remove data (although it can certainly be done with caution in a group meeting)*
+- *All `git mega` setup steps have been completed in all RDHPCS. So we only need to follow step 1.1 for the Level 2 management of the RRFS2 fix files. Step 2 is provided below just for awareness*
 ### 1.1 
+For example, we want to add a set of new static BEC files. We copy them to under `FIX_RRFS2/static_bec` as `conus12km_L60.20250606`
+```
+cd $FIX_RRFS2/static_bec
+cp -rp $SRC conus12km_L60.20250606
+# 1. Sanity check to ensure no SHA512SUM collisions:
+git mega collision-check conus12km_L60.20250606  # this will take a few minutes
+
+# 2. if everything is good, git mega deposit the new fix files into the MEGA space:
+git mega deposit conus12km_L60.20250606
+
+# 3. git add/commit/push
+git add conus12km_L60.20250606
+git commit -m "add static_bec/conus12km_L60.20250606/"
+git push
+
+# 4. sync to other platforms
+
+```
 
 # 2. Under the hood
 ### 2.1. install 
