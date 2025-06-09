@@ -57,9 +57,9 @@ for i in "$@"; do case $i in
     shift
     exec $basedir/ush/compareDirs.sh "$@"
     ;;
-  allhandscheck|allHandsCheck)
+  link-check)
     shift
-    exec $basedir/ush/allHandsCheck.sh "$@"
+    exec $basedir/ush/link-check.sh "$@"
     ;;
   repair)
     shift

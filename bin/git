@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 real_git=$(which -a git | sed -n '2p')
 if [[ -z "$real_git" ]]; then
   echo "git: No such file or directory"
