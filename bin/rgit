@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+#  a wrapper to use git under a role (or group) account
+#  by Guoqing Ge (guoqing.ge@noaa.gov) April 2019
+#
+MYGIT="git"
+
+username=`logname`
+echo $username
+
+${MYGIT} config user.name "${username}"
+${MYGIT} config user.email "role.rrfsfix@noaa.gov"
+
+${MYGIT} "$@"
+
+if [[ "$1" == *"commit"* ]] || [[ "$1" == *"tag"* ]]; then
+    remotes=`git remote`
+    for i in ${remotes[@]}; do
+      echo -e "\nDo you want to push the commit to the remote: $i (y/n)?"
+      read YN
+      if [[ "$YN" == "y" ]]; then
+         ${MYGIT} push $i
+      else
+         echo -e "The commit is not pushed to $i. Run 'rgit push $i' to do the push\n"
+      fi
+    done
+fi
+
+${MYGIT} config --unset user.name
+${MYGIT} config --unset user.email
