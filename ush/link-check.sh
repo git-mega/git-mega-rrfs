@@ -6,9 +6,15 @@ source $basedir/libfuncs.sh
 SetDirs
 exit_if_not_mega
 
+mypath="$1"
+if [[ ! -e "$mypath" ]]; then
+  echo "Usage: git mega link-check  <dir>" >&2
+  exit 1
+fi
+
 # find links pointing to an inaccessible mega file
 echo "inaccessible mega files:"
-find "$workTreeTop" -type l -print0 | while IFS= read -r -d '' myfile
+find "$mypath" -type l -print0 | while IFS= read -r -d '' myfile
 do
   if [[ ! "$myfile" == *".git/"* ]] && [[ ! "$myfile" == *".mega/"* ]] && $(is_link_to_mega_space "$myfile"); then
     flink=$(readlink $myfile)
