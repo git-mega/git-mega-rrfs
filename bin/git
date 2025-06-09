@@ -1,6 +1,14 @@
 #!/bin/bash
+my_git=${BASH_SOURCE[0]}
 
-real_git=$(which -a git | sed -n '2p')
+real_git=""
+for path in $(which -a git | uniq); do
+  if ! diff $path $my_git &>/dev/null; then
+    real_git=$path
+    break;
+  fi
+done
+
 if [[ -z "$real_git" ]]; then
   echo "git: No such file or directory"
   exit 1
