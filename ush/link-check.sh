@@ -22,7 +22,7 @@ do
     fname=$qroot/${fhash:0:2}/${fhash}
     if [[ ! -e $fname ]]; then
       #if dir existed but mega file not accessible, it means current MIRROR lacks this file as well
-      echo ${fhash:0:2}/${fhash}
+      echo -e "${myfile}:\n  ${fhash:0:2}/${fhash}"
     fi
   fi
 done
